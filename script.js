@@ -37,11 +37,31 @@ async function callGeminiDirect(promptText) {
     contents: [{ parts: [{ text: promptText }] }],
   };
 
-  const resp = await fetch(url, {
+ async function callGeminiDirect(promptText) {
+  const body = {
+    contents: [{ parts: [{ text: promptText }] }],
+  };
+
+  const resp = await fetch("/api/chat", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body), // 👈 this ensures JSON is sent correctly
   });
+
+  if (!resp.ok) {
+    const errText = await resp.text();
+    throw new Error(`HTTP ${resp.status}: ${errText}`);
+  }
+
+  const data = await resp.json();
+  const text =
+    data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+    "No response from Gemini.";
+  return text;
+}
+
 
   if (!resp.ok) {
     const errText = await resp.text();
