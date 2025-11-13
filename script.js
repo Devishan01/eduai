@@ -31,9 +31,7 @@ function hideTyping() {
 
 // ✅ Updated endpoint — current valid one (v1beta1)
 async function callGeminiDirect(promptText) {
-  const url =
-    "https://generativelanguage.googleapis.com/v1beta1/models/gemini-1.5-flash:generateContent?key=" +
-    encodeURIComponent(API_KEY);
+  const url = "/api/chat";
 
   const body = {
     contents: [{ parts: [{ text: promptText }] }],
