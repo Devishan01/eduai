@@ -30,38 +30,36 @@ function hideTyping() {
 }
 
 // ✅ Updated endpoint — current valid one (v1beta1)
+// ✅ Final Correct version
 async function callGeminiDirect(promptText) {
-  const url = "/api/chat";
-
   const body = {
     contents: [{ parts: [{ text: promptText }] }],
   };
 
- async function callGeminiDirect(promptText) {
-  const body = {
-    contents: [{ parts: [{ text: promptText }] }],
-  };
+  try {
+    const resp = await fetch("/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body), // send user question to backend
+    });
 
-  const resp = await fetch("/api/chat", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body), // 👈 this ensures JSON is sent correctly
-  });
+    if (!resp.ok) {
+      const errText = await resp.text();
+      throw new Error(`HTTP ${resp.status}: ${errText}`);
+    }
 
-  if (!resp.ok) {
-    const errText = await resp.text();
-    throw new Error(`HTTP ${resp.status}: ${errText}`);
+    const data = await resp.json();
+    const text =
+      data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+      "No response from Gemini.";
+    return text;
+  } catch (err) {
+    console.error("Error in callGeminiDirect:", err);
+    throw err;
   }
-
-  const data = await resp.json();
-  const text =
-    data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-    "No response from Gemini.";
-  return text;
 }
-
 
   if (!resp.ok) {
     const errText = await resp.text();
